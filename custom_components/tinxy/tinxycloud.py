@@ -244,11 +244,9 @@ class TinxyCloud:
         if color_temp is not None:
             payload["request"]["colorTemperatureInKelvin"] = color_temp
 
-        tinxy_response = self.tinxy_request(
+        return await self.tinxy_request(
             f"v2/devices/{item_id}/toggle", payload=payload, method="POST"
         )
-        self._logger.info(tinxy_response)
-        return await tinxy_response
 
     def get_device_info(self, device: Dict[str, Any]) -> Dict[str, Any]:
         """Parse device information for Home Assistant device registry.
