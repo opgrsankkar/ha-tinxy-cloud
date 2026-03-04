@@ -6,6 +6,8 @@ import logging
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
+from .const import TINXY_BACKEND_RO
+
 
 class TinxyException(Exception):
     """Base exception for Tinxy API errors."""
@@ -27,6 +29,7 @@ class TinxyHostConfiguration:
 
     api_token: str
     api_url: str | None
+    api_ro_url: str | None = None
 
     def __post_init__(self) -> None:
         """Validate configuration after initialization."""
@@ -98,18 +101,23 @@ class TinxyCloud:
         if payload is not None:
             payload["source"] = "Home Assistant"
 
+        method_normalized = method.upper()
+        base_url = self.host_config.api_url
+        if method_normalized == "GET":
+            base_url = self.host_config.api_ro_url or TINXY_BACKEND_RO
+
         try:
             async with self.web_session.request(
-                method=method,
-                url=f"{self.host_config.api_url}{path}",
+                method=method_normalized,
+                url=f"{base_url}{path}",
                 json=payload,
                 headers=headers,
             ) as resp:
                 resp.raise_for_status()
                 return await resp.json()
         except Exception as exc:
-            self._logger.error("Tinxy API [%s] call failed: %s", method, exc)
-            raise TinxyException(f"API [{method}] call failed: {exc}") from exc
+            self._logger.error("Tinxy API [%s] call failed: %s", method_normalized, exc)
+            raise TinxyException(f"API [{method_normalized}] call failed: {exc}") from exc
 
     async def sync_devices(self) -> None:
         """Synchronize all devices from the server."""

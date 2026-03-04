@@ -13,7 +13,7 @@ from homeassistant.const import Platform, CONF_API_KEY
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .const import DOMAIN, TINXY_BACKEND
+from .const import DOMAIN, TINXY_BACKEND, TINXY_BACKEND_RO
 from .tinxycloud import TinxyCloud, TinxyHostConfiguration
 from .coordinator import TinxyUpdateCoordinator
 
@@ -54,6 +54,7 @@ async def async_setup_entry(
     host_config = TinxyHostConfiguration(
         api_token=entry.data[CONF_API_KEY],
         api_url=TINXY_BACKEND,
+        api_ro_url=TINXY_BACKEND_RO,
     )
 
     # Initialize TinxyCloud API

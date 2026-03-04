@@ -19,7 +19,7 @@ from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .const import DOMAIN, TINXY_BACKEND
+from .const import DOMAIN, TINXY_BACKEND, TINXY_BACKEND_RO
 from .tinxycloud import TinxyCloud, TinxyHostConfiguration
 
 # Module-level logger
@@ -64,6 +64,7 @@ async def validate_user_input(
     host_config = TinxyHostConfiguration(
         api_token=user_data[CONF_API_KEY],
         api_url=TINXY_BACKEND,
+        api_ro_url=TINXY_BACKEND_RO,
     )
     api = TinxyCloud(host_config=host_config, web_session=web_session)
     try:
